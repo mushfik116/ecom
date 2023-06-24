@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import  Counter  from '../src/features/counter/Counter'
-import ProductList from './features/productList/ProductList'
+import ProductList from './features/product/ProductList'
 import Navbar from './features/navbar/Navbar'
 import Home from './pages/Home'
 import LoginPage from './pages/LoginPage'
@@ -24,23 +24,23 @@ const router = createBrowserRouter([
     
   },
   {
-    path: "login",
+    path: "/login",
     element: <LoginPage/>
   },
   {
-    path: "signup",
+    path: "/signup",
     element: <SignupPage/>
   },
   {
-    path: "cart",
+    path: "/cart",
     element: <CartPage/>
   },
   {
-    path: "checkout",
+    path: "/checkout",
     element: <CheckoutPage/>
   },
   {
-    path: "product-detail",
+    path: "/product-detail",
     element: <ProductDetailPage/>
   },
 ]);
