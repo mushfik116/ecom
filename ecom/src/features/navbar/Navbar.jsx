@@ -13,21 +13,11 @@ const user = {
   imageUrl:
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
-const navigation = [
-  // { name: 'Dashboard', href: '#', current: true },
-  { name: "Home", href: "/", current: false },
-  { name: "Cart", href: "cart", current: false },
-  { name: "Contacts", href: "contacts", current: false },
-  { name: "signup", href: "signup", current: false },
-  { name: "checkout", href: "checkout", current: false },
 
-
-  // { name: 'Reports', href: '#', current: false },
-];
 const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "My Profile", href: "/profile" },
+  { name: "My Orders", href: "/orders" },
+  { name: "Sign out", href: "/logout" },
 ];
 
 function classNames(...classes) {
@@ -35,8 +25,30 @@ function classNames(...classes) {
 }
 
 import React from "react";
+import { selectCartItems } from "../cart/cartSlice";
+import { useSelector } from "react-redux";
+import { selectloggedInUser } from "../auth/authSlice";
 
 const Navbar = ({ children }) => {
+  const cartItems = useSelector(selectCartItems);
+  const loggedUser = useSelector(selectloggedInUser);
+  let navigation = [
+    // { name: 'Dashboard', href: '#', current: true },
+    { name: "Home", href: "/", current: false },
+    { name: "Cart", href: "cart", current: false },
+    { name: "checkout", href: "checkout", current: false },
+    { name: "signup", href: "signup", current: false },
+    { name: "Contacts", href: "contacts", current: false },
+
+    // { name: 'Reports', href: '#', current: false },
+  ];
+  if (loggedUser) {
+    // debugger;
+    navigation = navigation.filter((item) => item.name !== "signup");
+    //! i had an issue called cannot access "navigation" (variable) before initialization.. the issue was
+    //! i set "let navigation" inside the if condition... i just had to remove let ...
+  }
+
   return (
     <div className="min-h-full">
       <Disclosure as="nav" className="bg-gray-800">
@@ -45,14 +57,14 @@ const Navbar = ({ children }) => {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="flex h-16 items-center justify-between">
                 <div className="flex items-center">
-                <Link to={"/"} >
-                  <div className="flex-shrink-0">
-                    <img
-                      className="h-8 w-8"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                      alt="Your Company"
-                    />
-                  </div>
+                  <Link to={"/"}>
+                    <div className="flex-shrink-0">
+                      <img
+                        className="h-8 w-8"
+                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                        alt="Your Company"
+                      />
+                    </div>
                   </Link>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">
@@ -89,8 +101,8 @@ const Navbar = ({ children }) => {
                       </Link>
                     </button>
                     {/* badge added here */}
-                    <span class="mb-6 -ml-3 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                      6
+                    <span className="mb-6 -ml-3 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                      {cartItems.length}
                     </span>
 
                     {/* Profile dropdown */}
@@ -118,15 +130,15 @@ const Navbar = ({ children }) => {
                           {userNavigation.map((item) => (
                             <Menu.Item key={item.name}>
                               {({ active }) => (
-                                <a
-                                  href={item.href}
+                                <Link
+                                  to={item.href}
                                   className={classNames(
                                     active ? "bg-gray-100" : "",
                                     "block px-4 py-2 text-sm text-gray-700"
                                   )}
                                 >
                                   {item.name}
-                                </a>
+                                </Link>
                               )}
                             </Menu.Item>
                           ))}
@@ -199,7 +211,7 @@ const Navbar = ({ children }) => {
                   </button>
                   {/* badge added here */}
                   <span class="mb-6 -ml-3 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                    6
+                    {cartItems.length}
                   </span>
                 </div>
                 <div className="mt-3 space-y-1 px-2">

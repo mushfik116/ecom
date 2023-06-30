@@ -1,12 +1,8 @@
-import { useForm } from "react-hook-form";
 import React from "react";
-import { Link, Navigate } from "react-router-dom";
-import { checkUserAsync, selectloggedInUser } from "./authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
-const Login = () => {
-  const user = useSelector(selectloggedInUser);
-  const dispatch = useDispatch();
+const ForgotPassword = () => {
   const {
     register,
     handleSubmit,
@@ -16,7 +12,7 @@ const Login = () => {
 
   return (
     <>
-      {user && <Navigate to={"/"} replace={true}></Navigate>}
+      {/* {user && <Navigate to={"/"} replace={true}></Navigate>} */}
       {/* login box start */}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -39,7 +35,7 @@ const Login = () => {
             onSubmit={handleSubmit((d) => {
               console.log(d);
 
-              dispatch(checkUserAsync(d));
+              //   dispatch(checkUserAsync(d));
             })}
           >
             <div>
@@ -47,7 +43,7 @@ const Login = () => {
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Email address
+                Enter your Email address to reset password
               </label>
               <div className="mt-2">
                 <input
@@ -69,7 +65,7 @@ const Login = () => {
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
@@ -79,7 +75,7 @@ const Login = () => {
                 </label>
                 <div className="text-sm">
                   <Link
-                    to={"/forgotPassword"}
+                    to={"/signup"}
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
                     Forgot password?
@@ -106,14 +102,14 @@ const Login = () => {
                   <p className="text-red-500">{errors.password.message}</p>
                 )}
               </div>
-            </div>
+            </div> */}
 
             <div>
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Log in
+                send
               </button>
             </div>
           </form>
@@ -134,4 +130,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

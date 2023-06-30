@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchAllproducts } from './productAPI';
+import { fetchAllproducts ,fetchProductById, fetchProductsByFilter} from './productAPI';
 
 const initialState = {
   products: [],
+  selectedProduct: null,
   status: 'idle',
 };
 
@@ -15,6 +16,24 @@ export const  fetchAllproductsAsync = createAsyncThunk(
   'product/fetchAllproducts',
   async () => {
     const response = await fetchAllproducts();
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+///me trying my own
+export const  fetchProductByIdAsync = createAsyncThunk(
+  'product/fetchProductById',
+  async (id) => {
+    const response = await fetchProductById(id);
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+
+export const  fetchProductsByFilterAsync = createAsyncThunk(
+  'product/fetchProductsByFilter',
+  async (filter) => {
+    const response = await fetchProductsByFilter(filter);
     // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
@@ -50,6 +69,24 @@ export const productSlice = createSlice({
       .addCase(fetchAllproductsAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.products = action.payload;
+      })
+
+    
+      .addCase(fetchProductByIdAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchProductByIdAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.selectedProduct = action.payload;
+      })
+
+     
+      .addCase(fetchProductsByFilterAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchProductsByFilterAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.products = action.payload;
       });
   },
 });
@@ -60,6 +97,9 @@ export const { increment, decrement, incrementByAmount } = productSlice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.product.value)`
 export const selectAllProducts = (state) => state.product.products;
+export const selectedProductById = (state) => state.product.selectedProduct;
+// export const fetchProductsByFilter = (state) => state.product.products;
+
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

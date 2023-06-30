@@ -2,11 +2,13 @@ import { Fragment, useEffect, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import {selectAllProducts,
+import {
+  selectAllProducts,
   decrement,
   increment,
   incrementByAmount,
   fetchAllproductsAsync,
+  fetchProductsByFilterAsync,
 } from "./productSlice";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { StarIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -19,47 +21,72 @@ import {
 } from "@heroicons/react/20/solid";
 
 const sortOptions = [
-  { name: "Most Popular", href: "#", current: true },
-  { name: "Best Rating", href: "#", current: false },
-  { name: "Newest", href: "#", current: false },
-  { name: "Price: Low to High", href: "#", current: false },
-  { name: "Price: High to Low", href: "#", current: false },
+  { name: "Best Rating", sort: "rating", order: "desc", current: false },
+
+  { name: "Price: Low to High", sort: "price", order: "asc", current: false },
+  { name: "Price: High to Low", sort: "price", order: "desc", current: false },
 ];
- 
+
 const filters = [
   {
-    id: "color",
-    name: "Color",
+    id: "brand",
+    name: "brands",
     options: [
-      { value: "white", label: "White", checked: false },
-      { value: "beige", label: "Beige", checked: false },
-      { value: "blue", label: "Blue", checked: true },
-      { value: "brown", label: "Brown", checked: false },
-      { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
+      { value: "Apple", label: "Apple", checked: false },
+      { value: "Samsung", label: "Samsung", checked: false },
+      { value: "OPPO", label: "OPPO", checked: false },
+      { value: "Huawei", label: "Huawei", checked: false },
+      {
+        value: "Microsoft Surface",
+        label: "Microsoft Surface",
+        checked: false,
+      },
+      { value: "Infinix", label: "Infinix", checked: false },
+      { value: "HP Pavilion", label: "HP Pavilion", checked: false },
+      {
+        value: "Impression of Acqua Di Gio",
+        label: "Impression of Acqua Di Gio",
+        checked: false,
+      },
+      { value: "Royal_Mirage", label: "Royal_Mirage", checked: false },
+      {
+        value: "Fog Scent Xpressio",
+        label: "Fog Scent Xpressio",
+        checked: false,
+      },
+      { value: "Al Munakh", label: "Al Munakh", checked: false },
+      { value: "Lord - Al-Rehab", label: "Lord  AlRehab", checked: false },
+      { value: "L'Oreal Paris", label: "L'Oreal Paris", checked: false },
+      { value: "Hemani Tea", label: "Hemani Tea", checked: false },
+      { value: "Dermive", label: "Dermive", checked: false },
+      { value: "ROREC White Rice", label: "ROREC White Rice", checked: false },
+      { value: "Fair & Clear", label: "Fair & Clear", checked: false },
+      { value: "Saaf & Khaas", label: "Saaf & Khaas", checked: false },
+      { value: "Bake Parlor Big", label: "Bake Parlor Big", checked: false },
+      {
+        value: "Baking Food Items",
+        label: "Baking Food Items",
+        checked: false,
+      },
+      { value: "fauji", label: "fauji", checked: false },
+      { value: "Dry Rose", label: "Dry Rose", checked: false },
+      { value: "Boho Decor", label: "Boho Decor", checked: false },
+      { value: "Flying Wooden", label: "Flying Wooden", checked: false },
+      { value: "LED Lights", label: "LED Lights", checked: false },
+      { value: "luxury palace", label: "luxury palace", checked: false },
+      { value: "Golden", label: "Golden", checked: false },
     ],
   },
   {
     id: "category",
     name: "Category",
     options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: true },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
-    ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
+      { value: "smartphones", label: "smartphones", checked: false },
+      { value: "laptops", label: "laptops", checked: false },
+      { value: "fragrances", label: "fragrances", checked: false },
+      { value: "skincare", label: "skincare", checked: false },
+      { value: "groceries", label: "groceries", checked: false },
+      { value: "home-decoration", label: "homedecoration", checked: false },
     ],
   },
 ];
@@ -68,71 +95,48 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const oldproducts = [
-  {
-    id: 1,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 2,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 3,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 4,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 5,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-];
-
-
-
 function ProductList() {
-  
   const dispatch = useDispatch();
   //prods
-const products =useSelector(selectAllProducts)
+  const products = useSelector(selectAllProducts);
   // const count = useSelector(selectCount);
-  useEffect(()=>{
-dispatch(fetchAllproductsAsync())
-  },[dispatch])
+  useEffect(() => {
+    dispatch(fetchAllproductsAsync());
+  }, [dispatch]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const [filter, setFilter] = useState({});
+
+  const handleFilter = (e, section, option) => {
+    let newFilter = { ...filter };
+    if (e.target.checked) {
+      newFilter[section.id] = option.value;
+      //  newFilter.push({[section.id]:option.value})
+
+      console.log(newFilter);
+    } else {
+      delete newFilter[section.id];
+    }
+
+    //   console.log(e.target.checked)
+    //   const newFilter={...filter,[section.id]:option.value}
+    setFilter(newFilter);
+    console.log(newFilter);
+    dispatch(fetchProductsByFilterAsync(newFilter));
+
+    //
+    //  newFilter.push({[section.id]:option.value})
+  };
+
+  const handleSort = (option) => {
+    console.log(option.sort);
+    console.log(option.order);
+    const newFilter = { ...filter, _sort: option.sort, _order: option.order };
+
+    setFilter(newFilter);
+    console.log(newFilter);
+    dispatch(fetchProductsByFilterAsync(newFilter));
+  };
 
   return (
     <div>
@@ -196,10 +200,10 @@ dispatch(fetchAllproductsAsync())
                       ))}
                     </ul> */}
 
-                        {filters.map((section) => (
+                        {filters.map((section, i) => (
                           <Disclosure
                             as="div"
-                            key={section.id}
+                            key={i}
                             className="border-t border-gray-200 px-4 py-6"
                           >
                             {({ open }) => (
@@ -227,9 +231,9 @@ dispatch(fetchAllproductsAsync())
                                 <Disclosure.Panel className="pt-6">
                                   <div className="space-y-6">
                                     {section.options.map(
-                                      (option, optionIdx) => (
+                                      (option, optionIdx, i) => (
                                         <div
-                                          key={option.value}
+                                          key={i}
                                           className="flex items-center"
                                         >
                                           <input
@@ -238,6 +242,9 @@ dispatch(fetchAllproductsAsync())
                                             defaultValue={option.value}
                                             type="checkbox"
                                             defaultChecked={option.checked}
+                                            onClick={(e) =>
+                                              handleFilter(e, section, option)
+                                            }
                                             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                           />
                                           <label
@@ -291,11 +298,14 @@ dispatch(fetchAllproductsAsync())
                     >
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="py-1">
-                          {sortOptions.map((option) => (
-                            <Menu.Item key={option.name}>
+                          {sortOptions.map((option, i) => (
+                            <Menu.Item key={i}>
                               {({ active }) => (
                                 <a
                                   href={option.href}
+                                  onClick={(e) => {
+                                    handleSort(option);
+                                  }}
                                   className={classNames(
                                     option.current
                                       ? "font-medium text-gray-900"
@@ -352,10 +362,10 @@ dispatch(fetchAllproductsAsync())
                   ))}
                 </ul> */}
 
-                    {filters.map((section) => (
+                    {filters.map((section, i) => (
                       <Disclosure
                         as="div"
-                        key={section.id}
+                        key={i}
                         className="border-b border-gray-200 py-6"
                       >
                         {({ open }) => (
@@ -382,17 +392,17 @@ dispatch(fetchAllproductsAsync())
                             </h3>
                             <Disclosure.Panel className="pt-6">
                               <div className="space-y-4">
-                                {section.options.map((option, optionIdx) => (
-                                  <div
-                                    key={option.value}
-                                    className="flex items-center"
-                                  >
+                                {section.options.map((option, optionIdx, i) => (
+                                  <div key={i} className="flex items-center">
                                     <input
                                       id={`filter-${section.id}-${optionIdx}`}
                                       name={`${section.id}[]`}
                                       defaultValue={option.value}
                                       type="checkbox"
                                       defaultChecked={option.checked}
+                                      onChange={(e) =>
+                                        handleFilter(e, section, option)
+                                      }
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     />
                                     <label
@@ -420,9 +430,12 @@ dispatch(fetchAllproductsAsync())
                         {/* <h2 className="text-2xl font-bold tracking-tight text-gray-900">Product List</h2> */}
 
                         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 ">
-                          {products.map((product) => (
-                            <Link to={"/product-detail"}>
-                              <div key={product.id} className="group relative border-grey-400 border-solid border-2 p-2">
+                          {products.map((product, i) => (
+                            <Link to={`/product-detail/${product.id}`}>
+                              <div
+                                key={i}
+                                className="group relative border-grey-400 border-solid border-2 p-2"
+                              >
                                 <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
                                   <img
                                     src={product.thumbnail}
@@ -433,30 +446,33 @@ dispatch(fetchAllproductsAsync())
                                 <div className="mt-4 flex justify-between">
                                   <div>
                                     <h3 className="text-sm text-gray-700">
-                                      <a href={product.href}>
+                                      <div href={product.href}>
                                         <span
                                           aria-hidden="true"
                                           className="absolute inset-0"
                                         />
                                         {product.title}
-                                      </a>
+                                      </div>
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-500">
-                                     <StarIcon className="w-6 h-6 inline text-pink-300"/>
-                                     <span className="align-bottom ml-1">
-
-                                      {product.rating}
-                                     </span>
+                                      <StarIcon className="w-6 h-6 inline text-pink-300" />
+                                      <span className="align-bottom ml-1">
+                                        {product.rating}
+                                      </span>
                                     </p>
                                   </div>
                                   <div>
-
-                                  <p className="text-sm font-medium text-gray-900">
-                                    {`$${product.price}`}
-                                  </p>
-                                  <p className="text-sm font-medium text-gray-400 jus line-through align-bottom">
-                                    {`$${Math.round(product.price-(product.price*product.discountPercentage)/100)}`}
-                                  </p>
+                                    <p className="text-sm font-medium text-gray-900">
+                                      {`$${product.price}`}
+                                    </p>
+                                    <p className="text-sm font-medium text-gray-400 jus line-through align-bottom">
+                                      {`$${Math.round(
+                                        product.price -
+                                          (product.price *
+                                            product.discountPercentage) /
+                                            100
+                                      )}`}
+                                    </p>
                                   </div>
                                 </div>
                               </div>
