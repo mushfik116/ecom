@@ -80,3 +80,4 @@ export const selectUserInfoStatus = (state) => state.user.status;
 // export const { increment } = userSlice.actions;
 
 export default userSlice.reducer;
+//! i think only 1/3 was done here .. so no userInfo yet.. only orders are updated

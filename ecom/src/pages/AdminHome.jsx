@@ -1,15 +1,15 @@
 import React from "react";
-import Checkout from "../features/checkout/Checkout";
 import Navbar from "../features/navbar/Navbar";
+import AdminProductList from "../features/admin/AdminProductList";
 
-const CheckoutPage = () => {
+const AdminHome = () => {
   return (
     <div>
       <Navbar>
-        <Checkout />
+        <AdminProductList />
       </Navbar>
     </div>
   );
 };
 
-export default CheckoutPage;
+export default AdminHome;

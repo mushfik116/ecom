@@ -25,3 +25,33 @@ export const createOrder = async (item) => {
     throw error; // Optionally re-throw the error to propagate it further
   }
 };
+
+export const fetchAllOrders = async () => {
+  try {
+    const res = await fetch("http://localhost:8080/orders");
+    const data = await res.json();
+    console.log(data);
+    return { data };
+  } catch (error) {
+    // Handle any errors that occur during the fetch operation
+    console.error("An error occurred:", error);
+    throw error; // Optionally re-throw the error to propagate it further
+  }
+};
+
+export const updateOrder = async (order) => {
+  try {
+    const res = await fetch("http://localhost:8080/orders/" + order.id, {
+      method: "PATCH",
+      body: JSON.stringify(order),
+      headers: { "content-type": "application/json" },
+    });
+    const data = await res.json();
+    console.log(data);
+    return { data };
+  } catch (error) {
+    // Handle any errors that occur during the fetch operation
+    console.error("An error occurred:", error);
+    throw error; // Optionally re-throw the error to propagate it further
+  }
+};

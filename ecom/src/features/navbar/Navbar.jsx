@@ -32,13 +32,17 @@ import { selectloggedInUser } from "../auth/authSlice";
 const Navbar = ({ children }) => {
   const cartItems = useSelector(selectCartItems);
   const loggedUser = useSelector(selectloggedInUser);
+  //!issu here.. if the user isnt logged in then the nav doesnt showup in home.. soln: i can make home protected route
+  //! or i can manually make a few nav options
+  // console.log(loggedUser.role);
   let navigation = [
     // { name: 'Dashboard', href: '#', current: true },
-    { name: "Home", href: "/", current: false },
-    { name: "Cart", href: "cart", current: false },
-    { name: "checkout", href: "checkout", current: false },
-    { name: "signup", href: "signup", current: false },
-    { name: "Contacts", href: "contacts", current: false },
+    { name: "Home", href: "/", user: true },
+    { name: "Cart", href: "/cart", user: true },
+    { name: "checkout", href: "/checkout", user: true },
+    { name: "signup", href: "/signup", user: true },
+    { name: "Admin", href: "/admin", admin: true },
+    { name: "AdminOrders", href: "/admin/adminOrders", admin: true },
 
     // { name: 'Reports', href: '#', current: false },
   ];
@@ -68,21 +72,23 @@ const Navbar = ({ children }) => {
                   </Link>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">
-                      {navigation.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-gray-900 text-white"
-                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                            "rounded-md px-3 py-2 text-sm font-medium"
-                          )}
-                          aria-current={item.current ? "page" : undefined}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
+                      {navigation.map((item) =>
+                        item[loggedUser?.role] ? (
+                          <Link
+                            key={item.name}
+                            to={item.href}
+                            className={classNames(
+                              item.current
+                                ? "bg-gray-900 text-white"
+                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                              "rounded-md px-3 py-2 text-sm font-medium"
+                            )}
+                            aria-current={item.current ? "page" : undefined}
+                          >
+                            {item.name}
+                          </Link>
+                        ) : null
+                      )}
                     </div>
                   </div>
                 </div>

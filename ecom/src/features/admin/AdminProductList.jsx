@@ -2,18 +2,14 @@ import { Fragment, useEffect, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  selectAllProducts,
-  decrement,
-  increment,
-  incrementByAmount,
-  fetchAllproductsAsync,
-  fetchProductsByFilterAsync,
-  fetchBrandsAsync,
-  fetchCategoriesAsync,
-  selectAllBrands,
-  selectAllCategories,
-} from "./productSlice";
+// import {
+//   selectAllProducts,
+//   decrement,
+//   increment,
+//   incrementByAmount,
+//   fetchAllproductsAsync,
+//   fetchProductsByFilterAsync,
+// } from "./productSlice";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { StarIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
@@ -23,6 +19,15 @@ import {
   PlusIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
+import {
+  fetchAllproductsAsync,
+  fetchBrandsAsync,
+  fetchCategoriesAsync,
+  fetchProductsByFilterAsync,
+  selectAllBrands,
+  selectAllCategories,
+  selectAllProducts,
+} from "../product/productSlice";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -31,75 +36,78 @@ const sortOptions = [
   { name: "Price: High to Low", sort: "price", order: "desc", current: false },
 ];
 
-const filters = [
-  {
-    id: "brand",
-    name: "brands",
-    options: [
-      { value: "Apple", label: "Apple", checked: false },
-      { value: "Samsung", label: "Samsung", checked: false },
-      { value: "OPPO", label: "OPPO", checked: false },
-      { value: "Huawei", label: "Huawei", checked: false },
-      {
-        value: "Microsoft Surface",
-        label: "Microsoft Surface",
-        checked: false,
-      },
-      { value: "Infinix", label: "Infinix", checked: false },
-      { value: "HP Pavilion", label: "HP Pavilion", checked: false },
-      {
-        value: "Impression of Acqua Di Gio",
-        label: "Impression of Acqua Di Gio",
-        checked: false,
-      },
-      { value: "Royal_Mirage", label: "Royal_Mirage", checked: false },
-      {
-        value: "Fog Scent Xpressio",
-        label: "Fog Scent Xpressio",
-        checked: false,
-      },
-      { value: "Al Munakh", label: "Al Munakh", checked: false },
-      { value: "Lord - Al-Rehab", label: "Lord  AlRehab", checked: false },
-      { value: "L'Oreal Paris", label: "L'Oreal Paris", checked: false },
-      { value: "Hemani Tea", label: "Hemani Tea", checked: false },
-      { value: "Dermive", label: "Dermive", checked: false },
-      { value: "ROREC White Rice", label: "ROREC White Rice", checked: false },
-      { value: "Fair & Clear", label: "Fair & Clear", checked: false },
-      { value: "Saaf & Khaas", label: "Saaf & Khaas", checked: false },
-      { value: "Bake Parlor Big", label: "Bake Parlor Big", checked: false },
-      {
-        value: "Baking Food Items",
-        label: "Baking Food Items",
-        checked: false,
-      },
-      { value: "fauji", label: "fauji", checked: false },
-      { value: "Dry Rose", label: "Dry Rose", checked: false },
-      { value: "Boho Decor", label: "Boho Decor", checked: false },
-      { value: "Flying Wooden", label: "Flying Wooden", checked: false },
-      { value: "LED Lights", label: "LED Lights", checked: false },
-      { value: "luxury palace", label: "luxury palace", checked: false },
-      { value: "Golden", label: "Golden", checked: false },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      { value: "smartphones", label: "smartphones", checked: false },
-      { value: "laptops", label: "laptops", checked: false },
-      { value: "fragrances", label: "fragrances", checked: false },
-      { value: "skincare", label: "skincare", checked: false },
-      { value: "groceries", label: "groceries", checked: false },
-      { value: "home-decoration", label: "homedecoration", checked: false },
-    ],
-  },
-];
+// const filters = [
+//   {
+//     id: "brand",
+//     name: "brands",
+//     options: [
+//       { value: "Apple", label: "Apple", checked: false },
+//       { value: "Samsung", label: "Samsung", checked: false },
+//       { value: "OPPO", label: "OPPO", checked: false },
+//       { value: "Huawei", label: "Huawei", checked: false },
+//       {
+//         value: "Microsoft Surface",
+//         label: "Microsoft Surface",
+//         checked: false,
+//       },
+//       { value: "Infinix", label: "Infinix", checked: false },
+//       { value: "HP Pavilion", label: "HP Pavilion", checked: false },
+//       {
+//         value: "Impression of Acqua Di Gio",
+//         label: "Impression of Acqua Di Gio",
+//         checked: false,
+//       },
+//       { value: "Royal_Mirage", label: "Royal_Mirage", checked: false },
+//       {
+//         value: "Fog Scent Xpressio",
+//         label: "Fog Scent Xpressio",
+//         checked: false,
+//       },
+//       { value: "Al Munakh", label: "Al Munakh", checked: false },
+//       { value: "Lord - Al-Rehab", label: "Lord  AlRehab", checked: false },
+//       { value: "L'Oreal Paris", label: "L'Oreal Paris", checked: false },
+//       { value: "Hemani Tea", label: "Hemani Tea", checked: false },
+//       { value: "Dermive", label: "Dermive", checked: false },
+//       { value: "ROREC White Rice", label: "ROREC White Rice", checked: false },
+//       { value: "Fair & Clear", label: "Fair & Clear", checked: false },
+//       { value: "Saaf & Khaas", label: "Saaf & Khaas", checked: false },
+//       { value: "Bake Parlor Big", label: "Bake Parlor Big", checked: false },
+//       {
+//         value: "Baking Food Items",
+//         label: "Baking Food Items",
+//         checked: false,
+//       },
+//       { value: "fauji", label: "fauji", checked: false },
+//       { value: "Dry Rose", label: "Dry Rose", checked: false },
+//       { value: "Boho Decor", label: "Boho Decor", checked: false },
+//       { value: "Flying Wooden", label: "Flying Wooden", checked: false },
+//       { value: "LED Lights", label: "LED Lights", checked: false },
+//       { value: "luxury palace", label: "luxury palace", checked: false },
+//       { value: "Golden", label: "Golden", checked: false },
+//     ],
+//   },
+//   {
+//     id: "category",
+//     name: "Category",
+//     options: [
+//       { value: "smartphones", label: "smartphones", checked: false },
+//       { value: "laptops", label: "laptops", checked: false },
+//       { value: "fragrances", label: "fragrances", checked: false },
+//       { value: "skincare", label: "skincare", checked: false },
+//       { value: "groceries", label: "groceries", checked: false },
+//       { value: "home-decoration", label: "homedecoration", checked: false },
+//     ],
+//   },
+// ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-function ProductList() {
+function AdminProductList() {
+  // const dispatch = useDispatch();
+  // //prods
+  // const products = useSelector(selectAllProducts);
   const dispatch = useDispatch();
   //prods
   const products = useSelector(selectAllProducts);
@@ -121,8 +129,10 @@ function ProductList() {
     },
   ];
   //!
-
   // const count = useSelector(selectCount);
+  // useEffect(() => {
+  //   dispatch(fetchAllproductsAsync());
+  // }, [dispatch]);
   useEffect(() => {
     dispatch(fetchAllproductsAsync());
     dispatch(fetchBrandsAsync());
@@ -297,7 +307,7 @@ function ProductList() {
             <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-                  All Products
+                  All Products (ADMIN)
                 </h1>
 
                 <div className="flex items-center">
@@ -453,10 +463,14 @@ function ProductList() {
                     <div className="bg-white">
                       <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
                         {/* <h2 className="text-2xl font-bold tracking-tight text-gray-900">Product List</h2> */}
-
+                        <Link to={"/admin/productform"}>
+                          <button className="my-2 flex items-center justify-center rounded-md border border-transparent bg-cyan-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                            Add New Product +
+                          </button>
+                        </Link>
                         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 ">
                           {products.map((product, i) => (
-                            <Link to={`/product-detail/${product.id}`}>
+                            <Link to={`/admin/productform/edit/${product.id}`}>
                               <div
                                 key={i}
                                 className="group relative border-grey-400 border-solid border-2 p-2"
@@ -500,6 +514,28 @@ function ProductList() {
                                     </p>
                                   </div>
                                 </div>
+                                {product.deleted && (
+                                  <div className="text-red-500">
+                                    {" "}
+                                    product deleted
+                                  </div>
+                                )}
+                                {product.stock <= 0 && (
+                                  <div className="text-red-500">
+                                    {" "}
+                                    out of stock
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <button className="my-2 flex items-center justify-center rounded-md border border-transparent bg-pink-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                                  Edit Product
+                                </button>
+                                <Link to={`/admin/productDetail/${product.id}`}>
+                                  <button className="my-2 flex items-center justify-center rounded-md border border-transparent bg-pink-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                                    details
+                                  </button>
+                                </Link>
                               </div>
                             </Link>
                           ))}
@@ -605,4 +641,4 @@ function ProductList() {
   );
 }
 
-export default ProductList;
+export default AdminProductList;

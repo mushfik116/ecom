@@ -5,10 +5,9 @@ import Navbar from "../features/navbar/Navbar";
 const CartPage = () => {
   return (
     <div>
-      {/* <Navbar>
-
-</Navbar> */}
-      <Cart />
+      <Navbar>
+        <Cart />
+      </Navbar>
     </div>
   );
 };

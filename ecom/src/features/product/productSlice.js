@@ -1,10 +1,20 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchAllproducts ,fetchProductById, fetchProductsByFilter} from './productAPI';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createProduct,
+  fetchAllproducts,
+  fetchBrands,
+  fetchCategories,
+  fetchProductById,
+  fetchProductsByFilter,
+  updateProduct,
+} from "./productAPI";
 
 const initialState = {
   products: [],
   selectedProduct: null,
-  status: 'idle',
+  brands: [],
+  category: [],
+  status: "idle",
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -12,8 +22,8 @@ const initialState = {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const  fetchAllproductsAsync = createAsyncThunk(
-  'product/fetchAllproducts',
+export const fetchAllproductsAsync = createAsyncThunk(
+  "product/fetchAllproducts",
   async () => {
     const response = await fetchAllproducts();
     // The value we return becomes the `fulfilled` action payload
@@ -21,8 +31,8 @@ export const  fetchAllproductsAsync = createAsyncThunk(
   }
 );
 ///me trying my own
-export const  fetchProductByIdAsync = createAsyncThunk(
-  'product/fetchProductById',
+export const fetchProductByIdAsync = createAsyncThunk(
+  "product/fetchProductById",
   async (id) => {
     const response = await fetchProductById(id);
     // The value we return becomes the `fulfilled` action payload
@@ -30,8 +40,8 @@ export const  fetchProductByIdAsync = createAsyncThunk(
   }
 );
 
-export const  fetchProductsByFilterAsync = createAsyncThunk(
-  'product/fetchProductsByFilter',
+export const fetchProductsByFilterAsync = createAsyncThunk(
+  "product/fetchProductsByFilter",
   async (filter) => {
     const response = await fetchProductsByFilter(filter);
     // The value we return becomes the `fulfilled` action payload
@@ -39,8 +49,46 @@ export const  fetchProductsByFilterAsync = createAsyncThunk(
   }
 );
 
+export const fetchBrandsAsync = createAsyncThunk(
+  "product/fetchBrands",
+  async () => {
+    const response = await fetchBrands();
+
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+export const fetchCategoriesAsync = createAsyncThunk(
+  "product/fetchCategories",
+  async () => {
+    const response = await fetchCategories();
+
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+
+export const createProductAsync = createAsyncThunk(
+  "product/createProduct",
+  async (product) => {
+    const response = await createProduct(product);
+
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+export const updateProductAsync = createAsyncThunk(
+  "product/updateProduct",
+  async (product) => {
+    const response = await updateProduct(product);
+
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+
 export const productSlice = createSlice({
-  name: 'product',
+  name: "product",
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -55,8 +103,8 @@ export const productSlice = createSlice({
       state.value -= 1;
     },
     // Use the PayloadAction type to declare the contents of `action.payload`
-    incrementByAmount: (state, action) => {
-      state.value += action.payload;
+    clearSelectedProduct: (state, action) => {
+      state.selectedProduct = null;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -64,42 +112,76 @@ export const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllproductsAsync.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchAllproductsAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = "idle";
         state.products = action.payload;
       })
 
-    
       .addCase(fetchProductByIdAsync.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchProductByIdAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = "idle";
         state.selectedProduct = action.payload;
       })
 
-     
       .addCase(fetchProductsByFilterAsync.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchProductsByFilterAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = "idle";
         state.products = action.payload;
+      })
+      .addCase(fetchBrandsAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchBrandsAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.brands = action.payload;
+      })
+      .addCase(fetchCategoriesAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchCategoriesAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.category = action.payload;
+      })
+      .addCase(createProductAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(createProductAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.products.push(action.payload);
+      })
+      .addCase(updateProductAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateProductAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        const index = state.products.findIndex((product) => {
+          product.id === action.payload.id;
+        });
+
+        state.products[index] = action.payload;
       });
   },
 });
 
-export const { increment, decrement, incrementByAmount } = productSlice.actions;
+export const { increment, decrement, incrementByAmount, clearSelectedProduct } =
+  productSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.product.value)`
 export const selectAllProducts = (state) => state.product.products;
 export const selectedProductById = (state) => state.product.selectedProduct;
-// export const fetchProductsByFilter = (state) => state.product.products;
 
+export const selectAllBrands = (state) => state.product.brands;
+export const selectAllCategories = (state) => state.product.category;
+
+// export const fetchProductsByFilter = (state) => state.product.products;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
@@ -111,7 +193,6 @@ export const selectedProductById = (state) => state.product.selectedProduct;
 // };
 
 export default productSlice.reducer;
-
 
 // >>some solved questions
 
@@ -128,8 +209,6 @@ export default productSlice.reducer;
 // By using Immer, you don't have to worry about manually creating copies of the state or writing complex immutability logic. It simplifies the process of updating the state in Redux Toolkit, making your code more readable and maintainable. It also helps reduce the amount of code you need to write, as Immer handles the immutability operations for you.
 
 // Overall, Immer is a powerful tool for reducing complexity in Redux Toolkit by providing a more intuitive and concise way to work with immutable data, allowing you to focus on defining the state transformations rather than dealing with immutability details.
-
-
 
 // q2:but isnt objects and arrays are mutable ? cant i just update them without copying with three dots?
 
@@ -149,7 +228,6 @@ export default productSlice.reducer;
 
 // Using Immer with Redux Toolkit simplifies the process of working with immutable data by reducing the boilerplate code required to update state and making the code more readable. It enforces immutability without sacrificing the benefits of mutability during the state update process, providing a balance between simplicity and predictability in Redux development.
 
-
 // q3:so you mean i just think of mutable data types as immutable to keep the redux principle ? or redux itself something under the hood to make the mutable data types like objs arrays immutable so i can not avoid redux principle?
 
 // ans:In Redux, the principle of immutability applies to the state managed by the Redux store. Redux itself does not enforce immutability on JavaScript's mutable data types such as objects and arrays. It is up to you as the developer to ensure that you follow the principles of immutability when updating the state in a Redux application.
@@ -163,7 +241,6 @@ export default productSlice.reducer;
 // Libraries like Immer help simplify working with immutable updates by abstracting away the complexity of creating new copies of the state. They provide a more intuitive and readable way to update state while ensuring immutability under the hood. Immer and similar libraries can be used in combination with Redux to make the process of managing immutable state easier and more efficient.
 
 // So, in summary, while JavaScript's objects and arrays are mutable by default, it is important to treat them as immutable within the context of Redux to maintain the principles of predictability and efficient change detection. Libraries like Immer can assist in achieving immutability and simplify the process of working with state updates.
-
 
 // q4:so by using immer redux keeps the "immutiblity principle" and still allows the developer to update states in easier conventional .. ~no copying state~ way ?
 
@@ -181,8 +258,6 @@ export default productSlice.reducer;
 
 // By using Immer, you get the benefits of immutability while enjoying a more convenient and conventional update syntax. It simplifies state management and helps you write more readable and maintainable code, all while adhering to Redux principles.
 
-
-
 ////////////////////////////////////////////////
 // q: why use extrareducers?
 
@@ -193,9 +268,9 @@ export default productSlice.reducer;
 
 // ans: first we need to understand how api fetching works and how we save the fetched data in redux state!
 
-//    lets say we are fetching products .. for that we need a fetcch product function that feches data and the data is 
-//    being dispatched inside the fect product function ! so we provide the function with dispatch 
-//    ... if we want to call the function we do that inside useeffect! and that it 
+//    lets say we are fetching products .. for that we need a fetcch product function that feches data and the data is
+//    being dispatched inside the fect product function ! so we provide the function with dispatch
+//    ... if we want to call the function we do that inside useeffect! and that it
 
-//    ... but all of this happens in the component structure what we can separate the logic and keep in in async thunk 
+//    ... but all of this happens in the component structure what we can separate the logic and keep in in async thunk
 //     in short its a middleware

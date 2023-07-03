@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 // import { selectUserInfo, updateUserAsync } from "../userSlice";
 import { useForm } from "react-hook-form";
+import { selectloggedInUser } from "../auth/authSlice";
 
 export default function UserProfile() {
   const dispatch = useDispatch();
   // const userInfo = useSelector(selectUserInfo);
   const [selectedEditIndex, setSelectedEditIndex] = useState(-1);
   const [showAddAddressForm, setShowAddAddressForm] = useState(false);
-
+  const loggeduser = useSelector(selectloggedInUser);
   const {
     register,
     handleSubmit,
@@ -66,7 +67,11 @@ export default function UserProfile() {
             </h3>
           )}
         </div> */}
-
+        {/* //TODO: this will change later */}
+        <div className="font-bold text-4xl">
+          <h1>logged users' email : {loggeduser.email}</h1>
+          <h1 className="text-red-500 font-bold">role :{loggeduser.role}</h1>
+        </div>
         <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
           <button
             onClick={(e) => {

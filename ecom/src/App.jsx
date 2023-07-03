@@ -28,8 +28,55 @@ import UserOrders from "./features/user/UserOrders";
 import UserProfile from "./features/user/UserProfile";
 import Logout from "./features/auth/Logout";
 import ForgotPassword from "./features/auth/ForgotPassword";
+import AdminProductDetail from "./features/admin/AdminProductDetail";
+import AdminProductList from "./features/admin/AdminProductList";
+import AdminHome from "./pages/AdminHome";
+import ProtectedAdmin from "./features/auth/ProtectedAdmin";
+import AdminProductDetailPage from "./pages/AdminProductDetailPage";
+import ProductForm from "./features/admin/ProductForm";
+import AdminOrders from "./features/admin/AdminOrders";
 
 const router = createBrowserRouter([
+  {
+    path: "/admin",
+    element: (
+      <ProtectedAdmin>
+        <AdminHome />,
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/productDetail/:id",
+    element: (
+      <ProtectedAdmin>
+        <AdminProductDetailPage />,
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/productForm",
+    element: (
+      <ProtectedAdmin>
+        <ProductForm />
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/productForm/edit/:id",
+    element: (
+      <ProtectedAdmin>
+        <ProductForm />
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/adminOrders",
+    element: (
+      <ProtectedAdmin>
+        <AdminOrders />
+      </ProtectedAdmin>
+    ),
+  },
   {
     path: "/",
     element: <Home />,

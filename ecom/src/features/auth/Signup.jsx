@@ -44,7 +44,14 @@ const Signup = () => {
             onSubmit={handleSubmit((d) => {
               console.log(d);
               const { email, password, confirmPassword } = d;
-              dispatch(createUserAsync({ email, password, addresses: [] }));
+              dispatch(
+                createUserAsync({
+                  email,
+                  password,
+                  addresses: [],
+                  role: "user",
+                })
+              );
             })}
           >
             <div>

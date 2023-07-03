@@ -26,66 +26,65 @@
 //   });
 // }
 
-
 //async await way...
-export const fetchAllproducts = async()=> {
+export const fetchAllproducts = async () => {
   try {
     const res = await fetch("http://localhost:8080/products");
     const data = await res.json();
-    return {data}
+    return { data };
   } catch (error) {
     // Handle any errors that occur during the fetch operation
-    console.error('An error occurred:', error);
+    console.error("An error occurred:", error);
     throw error; // Optionally re-throw the error to propagate it further
   }
-}
+};
 
 ////my way.. for single product fetching
-export const fetchProductById = async(id)=> {
+export const fetchProductById = async (id) => {
   try {
     const res = await fetch(`http://localhost:8080/products/${id}`);
     const data = await res.json();
-    return {data}
+    return { data };
   } catch (error) {
     // Handle any errors that occur during the fetch operation
-    console.error('An error occurred:', error);
+    console.error("An error occurred:", error);
     throw error; // Optionally re-throw the error to propagate it further
   }
-}
+};
 
 //filtering
-export const fetchProductsByFilter = async(filter)=> {
+export const fetchProductsByFilter = async (filter) => {
   // filter ={brands:["apple","samsung"] ,category:["phones","laptops"]} //todo
-let qstring=''
-for(let key in filter){
-  // qstring +=`${key}=${filter[key]}&`
-  qstring += `${key}=${filter[key]}&`
-}
+  let qstring = "";
+  for (let key in filter) {
+    // qstring +=`${key}=${filter[key]}&`
+    qstring += `${key}=${filter[key]}&`;
+  }
 
   try {
-    const res = await fetch(`http://localhost:8080/products?`+qstring);
+    const res = await fetch(`http://localhost:8080/products?` + qstring);
     const data = await res.json();
-    return {data}
+    return { data };
   } catch (error) {
     // Handle any errors that occur during the fetch operation
-    console.error('An error occurred:', error);
+    console.error("An error occurred:", error);
     throw error; // Optionally re-throw the error to propagate it further
   }
-}
+};
 
 ///fetch brands and categories
 
-export const fetchCategories = async(id)=> {
-  try {
-    const res = await fetch(`http://localhost:8080/products`);
-    const data = await res.json();
-    return {data}
-  } catch (error) {
-    // Handle any errors that occur during the fetch operation
-    console.error('An error occurred:', error);
-    throw error; // Optionally re-throw the error to propagate it further
-  }
-}
+// export const fetchCategories = async (id) => {
+//   try {
+//     const res = await fetch(`http://localhost:8080/products`);
+//     const data = await res.json();
+//     return { data };
+//   } catch (error) {
+//     // Handle any errors that occur during the fetch operation
+//     console.error("An error occurred:", error);
+//     throw error; // Optionally re-throw the error to propagate it further
+//   }
+// };
 
 // export function fetchCategories() {
 //   return new Promise(async (resolve) => {
@@ -95,10 +94,79 @@ export const fetchCategories = async(id)=> {
 //   });
 // }
 
-export function fetchBrands() {
-  return new Promise(async (resolve) => {
-    const response = await fetch('/brands');
-    const data = await response.json();
-    resolve({ data });
-  });
-}
+// export function fetchBrands() {
+//   return new Promise(async (resolve) => {
+//     const response = await fetch('/brands');
+//     const data = await response.json();
+//     resolve({ data });
+//   });
+// }
+
+//!brands & categories api
+
+export const fetchBrands = async () => {
+  try {
+    const res = await fetch("http://localhost:8080/brands");
+    console.log(res);
+
+    const data = await res.json();
+    console.log({ data });
+    return { data };
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};
+// const d = await fetchBrands();
+// console.log(d);
+
+export const fetchCategories = async () => {
+  try {
+    const res = await fetch("http://localhost:8080/category");
+    console.log(res);
+
+    const data = await res.json();
+    console.log({ data });
+    return { data };
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};
+
+// const c = await fetchCategories();
+// console.log(c);
+
+//create products
+
+export const createProduct = async (product) => {
+  try {
+    const res = await fetch("http://localhost:8080/products", {
+      method: "POST",
+      body: JSON.stringify(product),
+      headers: { "content-type": "application/json" },
+    });
+    console.log(res);
+
+    const data = await res.json();
+    console.log({ data });
+    return { data };
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};
+
+export const updateProduct = async (product) => {
+  try {
+    const res = await fetch("http://localhost:8080/products/" + product.id, {
+      method: "PATCH",
+      body: JSON.stringify(product),
+      headers: { "content-type": "application/json" },
+    });
+    console.log(res);
+
+    const data = await res.json();
+    console.log({ data });
+    return { data };
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};

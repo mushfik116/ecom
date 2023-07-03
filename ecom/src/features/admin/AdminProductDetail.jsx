@@ -3,9 +3,15 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductByIdAsync, selectedProductById } from "./productSlice";
-import { addItemTOCartAsync, selectCartItems } from "../cart/cartSlice";
+import {
+  fetchProductByIdAsync,
+  selectedProductById,
+} from "../product/productSlice";
+import { addItemTOCartAsync } from "../cart/cartSlice";
 import { selectloggedInUser } from "../auth/authSlice";
+// import { fetchProductByIdAsync, selectedProductById } from "./productSlice";
+// import { addItemTOCartAsync } from "../cart/cartSlice";
+// import { selectloggedInUser } from "../auth/authSlice";
 const oldProduct = {
   name: "Basic Tee 6-Pack",
   price: "$192",
@@ -89,7 +95,7 @@ const sizes = [
   { name: "3XL", inStock: true },
 ];
 
-export default function ProductDetail() {
+export default function AdminProductDetail() {
   ///// my work
   const navigate = useNavigate();
   const { id } = useParams();
@@ -98,7 +104,6 @@ export default function ProductDetail() {
 
   const product = useSelector(selectedProductById);
   const user = useSelector(selectloggedInUser);
-  const cartItems = useSelector(selectCartItems);
   console.log(user);
   console.log(product);
   useEffect(() => {
@@ -109,29 +114,17 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState(sizes[2]);
 
   const handleAddToCart = (e) => {
-    //! there was an issue adding cart items if it was priviously added
     e.preventDefault();
     // console.log(e)
-
     console.log(product);
     console.log(user);
-    console.log({ ...product, quantity: 1, user: user.id });
     //todo just roughly naming...
-
-    if (cartItems.findIndex((item) => item.productId === product.id) < 0) {
-      const newItem = {
-        ...product,
-        productId: product.id,
-        quantity: 1,
-        user: user.id,
-      };
-      delete newItem["id"];
-      console.log(newItem);
-      dispatch(addItemTOCartAsync(newItem));
-      //the issue was i was adding products id and restricting cart id to make and thats why the conflicts occured
-    } else {
-      console.log("product already on cart");
-    }
+    console.log({ ...product, quantity: 1, user: user.id });
+    const newItem = { ...product, quantity: 1, user: user.id };
+    delete newItem["id"];
+    console.log(newItem);
+    dispatch(addItemTOCartAsync(newItem));
+    //the issue was i was adding products id and restricting cart id to make and thats why the conflicts occured
     navigate("/cart");
   };
 

@@ -56,7 +56,7 @@ const Checkout = () => {
   console.log(errors);
 
   // regular states
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(user.addresses[0]);
   const [selcetedPaymentMethod, setSelectedPaymentMethod] = useState("cash");
 
   const handleAddress = (e) => {
@@ -450,6 +450,10 @@ const Checkout = () => {
                               id="address"
                               name="address"
                               type="radio"
+                              checked={
+                                index ===
+                                user.addresses.indexOf(selectedAddress)
+                              }
                               value={index}
                               onChange={(e) => {
                                 handleAddress(e, person);
